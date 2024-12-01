@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -24,7 +25,8 @@ func readInput() ([]int, []int) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		fields := strings.Split(line, " ")
+    s := regexp.MustCompile(`\s+`)
+		fields := s.Split(line, 2)
 
 		left := strings.TrimSpace(fields[0])
 		right := strings.TrimSpace(fields[len(fields)-1])

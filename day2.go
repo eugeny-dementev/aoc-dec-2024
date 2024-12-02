@@ -59,9 +59,7 @@ func day2CountSafeReports() {
 		}
 
 		if !safe && tolerable {
-			fmt.Println("Extra report:", report)
 			day2IsReportTolerable(report, true)
-
 		}
 	}
 

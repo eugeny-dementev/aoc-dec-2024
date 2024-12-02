@@ -103,17 +103,15 @@ func day2IsReportSafe(report []int) bool {
 }
 
 func day2IsReportTolerable(report []int) bool {
-	safeCounter := 0
-
 	for i := range report {
 		clone := make([]int, len(report))
 		copy(clone, report)
 		reduced := append(clone[:i], clone[i+1:]...)
 
 		if day2IsReportSafe(reduced) {
-			safeCounter++
+			return true
 		}
 	}
 
-	return safeCounter > 0
+	return false
 }

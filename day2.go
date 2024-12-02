@@ -48,7 +48,7 @@ func day2CountSafeReports() {
 
 	for _, report := range reports {
 		safe := day2IsReportSafe(report)
-		tolerable := day2IsReportTolerable(report, false)
+		tolerable := day2IsReportTolerable(report)
 
 		if safe {
 			safeCounter++
@@ -59,7 +59,7 @@ func day2CountSafeReports() {
 		}
 
 		if !safe && tolerable {
-			day2IsReportTolerable(report, true)
+			day2IsReportTolerable(report)
 		}
 	}
 
@@ -102,31 +102,7 @@ func day2IsReportSafe(report []int) bool {
 	return true
 }
 
-func isIncreasing(report []int) (bool, bool) {
-	// return true if most of the values are increasing
-	prev := report[0]
-	rest := report[1:]
-
-	inc := 0
-
-	for _, cur := range rest {
-		if prev < cur {
-			inc++
-		} else {
-			inc--
-		}
-	}
-
-	if inc == 0 {
-		return false, true
-	}
-
-	sign := inc / IntAbs(inc)
-
-	return sign > 0, len(report)-IntAbs(inc) > 1
-}
-
-func day2IsReportTolerable(report []int, print bool) bool {
+func day2IsReportTolerable(report []int) bool {
 	safeCounter := 0
 
 	for i := range report {

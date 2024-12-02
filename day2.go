@@ -105,77 +105,41 @@ func day2IsReportSafe(report []int) bool {
 }
 
 func isIncreasing(report []int) (bool, bool) {
-  // return true if most of the values are increasing
+	// return true if most of the values are increasing
 	prev := report[0]
 	rest := report[1:]
 
-  inc := 0
+	inc := 0
 
-  for _, cur := range rest {
-    if prev < cur {
-      inc++
-    } else {
-      inc--
-    }
-  }
+	for _, cur := range rest {
+		if prev < cur {
+			inc++
+		} else {
+			inc--
+		}
+	}
 
-  if inc == 0 {
-    return false, true
-  }
+	if inc == 0 {
+		return false, true
+	}
 
-  sign := inc / IntAbs(inc)
+	sign := inc / IntAbs(inc)
 
-  return sign > 0, len(report) - IntAbs(inc) > 1
+	return sign > 0, len(report)-IntAbs(inc) > 1
 }
 
 func day2IsReportTolerable(report []int, print bool) bool {
-	prev := report[0]
-	rest := report[1:]
-  max := prev
+	safeCounter := 0
 
-	increasing, badOrder := isIncreasing(report)
+	for i := range report {
+		clone := make([]int, len(report))
+		copy(clone, report)
+		reduced := append(clone[:i], clone[i+1:]...)
 
-  if badOrder {
-    return false
-  }
-
-	orderFailsCounter := 0
-	diffFailsCounter := 0
-  maxFailsCounter := 0
-
-	for _, cur := range rest {
-		if increasing && prev > cur {
-			orderFailsCounter += 1
+		if day2IsReportSafe(reduced) {
+			safeCounter++
 		}
-
-		if !increasing && prev < cur {
-			orderFailsCounter += 1
-		}
-
-    if increasing && max > cur {
-      maxFailsCounter += 1
-    } else {
-      max = cur
-    }
-
-    if !increasing && max < cur {
-      maxFailsCounter += 1
-    } else  {
-      max = cur
-    }
-
-
-		diff := IntAbs(prev - cur)
-		if diff < 1 || diff > 3 {
-			diffFailsCounter += 1
-		}
-
-		prev = cur
 	}
 
-	if print {
-		fmt.Println("Failing counters, (order, diff, max)", orderFailsCounter, diffFailsCounter, maxFailsCounter)
-	}
-
-	return orderFailsCounter+diffFailsCounter+maxFailsCounter < 2
+	return safeCounter > 0
 }

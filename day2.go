@@ -66,18 +66,18 @@ func IntAbs(x int) int {
 
 func day2IsReportSafe(report []int) bool {
 	prev := report[0]
-  last := report[len(report)-1]
+	last := report[len(report)-1]
 	rest := report[1:]
 
-  increasing := prev < last
+	increasing := prev < last
 
 	for _, cur := range rest {
 		if increasing && prev > cur {
-      return false
+			return false
 		}
 
 		if !increasing && prev < cur {
-      return false
+			return false
 		}
 
 		diff := IntAbs(prev - cur)
@@ -85,7 +85,11 @@ func day2IsReportSafe(report []int) bool {
 			return false
 		}
 
-    prev = cur
+		prev = cur
+	}
+
+	return true
+}
 	}
 
   return true

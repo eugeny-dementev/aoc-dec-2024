@@ -220,8 +220,10 @@ func day4XmaxCount() {
 	for x := 0; x < len(matrix); x++ {
 		line := matrix[x]
 		for y := 0; y < len(line); y++ {
-			for d := 1; d <= 8; d++ {
-				XmasCounter += day4CheckCoordinate(x, y, d, matrix)
+			if line[y] == X {
+				for d := 1; d <= 8; d++ {
+					XmasCounter += day4CheckCoordinate(x, y, d, matrix)
+				}
 			}
 		}
 	}

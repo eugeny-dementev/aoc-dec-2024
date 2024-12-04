@@ -6,4 +6,5 @@ func main() {
 	day2CountSafeReports()
 	day3ExtractMul()
 	day3ExtractMulWithCondition()
+	day4XmaxCount()
 }

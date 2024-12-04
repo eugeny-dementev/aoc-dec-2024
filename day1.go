@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func readInput() ([]int, []int) {
+func readDay1Input() ([]int, []int) {
 	file, err := os.Open("day1.txt")
 	if err != nil {
 		panic(err)
@@ -48,7 +48,7 @@ func readInput() ([]int, []int) {
 }
 
 func day1part1distance() {
-  left, right := readInput()
+  left, right := readDay1Input()
 
 	sort.Ints(left)
 	sort.Ints(right)
@@ -68,7 +68,7 @@ func day1part1distance() {
 }
 
 func day1part2similarityScore() {
-  left, right := readInput()
+  left, right := readDay1Input()
 
 	countMap := map[int]int{}
 	for _, v := range right {

@@ -15,6 +15,8 @@ var (
 	S byte = []byte("S")[0]
 )
 
+var dot = []byte(".")[0]
+
 var day4example1 []byte = []byte(`..X...
 .SAMX.
 .A..A.
@@ -67,27 +69,16 @@ func (m Matrix) Print() {
 
 func day4IsTargetWork(word []byte) int {
 	str := string(word)
-  isTarget := str == target
+	isTarget := str == target
 
-  if isTarget {
-    return 1
-  }
+	if isTarget {
+		return 1
+	}
 
 	return 0
 }
 
-func day4CheckCoordinate(x, y int, matrix Matrix, direction int) int {
-	assert.Assert(direction >= 1 && direction <= 8, "direction should be in range of switch case")
-	assert.Assert(x >= 0 && x < len(matrix), "x should be in range of matrix")
-	assert.Assert(y >= 0 && y < len(matrix[0]), "y should be in range of matrix[x]")
-
-  lineLen := len(matrix[0])
-  for i, line := range matrix {
-    curLineLen := len(line)
-    assert.Assert(curLineLen == lineLen, "each line should have same length as previous", "curLineLen", curLineLen, "i", i, "len(matrix)", len(matrix))
-    lineLen = curLineLen
-  }
-
+func day4CheckCoordinate(x, y, direction int, matrix Matrix) int {
 	// 1. left -> right
 	// 2. right -> left
 	// 3. top -> bottom
@@ -169,21 +160,80 @@ func day4CheckCoordinate(x, y int, matrix Matrix, direction int) int {
 	return day4IsTargetWork(word)
 }
 
+func day4CheckXMaxForCoordinate(x, y int, matrix Matrix) int {
+	assert.Assert(x >= 1 && x < len(matrix)-1, "x should be in range of matrix -1 on both edges")
+	assert.Assert(y >= 1 && y < len(matrix[0])-1, "y should be in range of matrix[x] -1 on both edges")
+
+	lineLen := len(matrix[0])
+	for i, line := range matrix {
+		curLineLen := len(line)
+		assert.Assert(curLineLen == lineLen, "each line should have same length as previous", "curLineLen", curLineLen, "i", i, "len(matrix)", len(matrix))
+		lineLen = curLineLen
+	}
+
+	// 1. left -> right
+	// 2. right <- left
+	// 3. top -> bottom
+	// 4. bottom -> top
+
+	ltrb, lbrt := string([]byte{matrix[x-1][y-1], A, matrix[x+1][y+1]}), string([]byte{matrix[x+1][y-1], A, matrix[x-1][y+1]})
+
+	matched := 0
+
+	if ltrb == "MAS" && lbrt == "MAS" {
+		matched = 1
+	}
+
+	if ltrb == "MAS" && lbrt == "SAM" {
+		matched = 1
+	}
+
+	if ltrb == "SAM" && lbrt == "MAS" {
+		matched = 1
+	}
+
+	if ltrb == "SAM" && lbrt == "SAM" {
+		matched = 1
+	}
+
+	// subMatrix := Matrix{
+	// 	[]byte{matrix[x-1][y-1], dot, matrix[x-1][y+1]},
+	// 	[]byte{dot, A, dot},
+	// 	[]byte{matrix[x+1][y-1], dot, matrix[x+1][y+1]},
+	// }
+
+	// if matched == 1 {
+	// 	subMatrix.Print()
+	// }
+
+	return matched
+}
+
 func day4XmaxCount() {
 	content := readInput("day4.txt")
 
 	matrix := readMatrix(content)
 
-	counter := 0
+	XmasCounter := 0
+	XMasCounter := 0
 
 	for x := 0; x < len(matrix); x++ {
 		line := matrix[x]
 		for y := 0; y < len(line); y++ {
 			for d := 1; d <= 8; d++ {
-				counter += day4CheckCoordinate(x, y, matrix, d)
+				XmasCounter += day4CheckCoordinate(x, y, d, matrix)
 			}
 		}
 	}
 
-	fmt.Println("Total:", counter)
+	for x := 1; x < len(matrix)-1; x++ {
+		for y := 1; y < len(matrix[x])-1; y++ {
+			if matrix[x][y] == A {
+				XMasCounter += day4CheckXMaxForCoordinate(x, y, matrix)
+			}
+		}
+	}
+
+	fmt.Println("Total:", XmasCounter)
+	fmt.Println("Total:", XMasCounter)
 }

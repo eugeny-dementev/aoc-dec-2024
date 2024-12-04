@@ -69,8 +69,6 @@ func day4IsTargetWork(word []byte) int {
 	str := string(word)
   isTarget := str == target
 
-	fmt.Println("WORD:", str, target, isTarget)
-
   if isTarget {
     return 1
   }
@@ -82,6 +80,14 @@ func day4CheckCoordinate(x, y int, matrix Matrix, direction int) int {
 	assert.Assert(direction >= 1 && direction <= 8, "direction should be in range of switch case")
 	assert.Assert(x >= 0 && x < len(matrix), "x should be in range of matrix")
 	assert.Assert(y >= 0 && y < len(matrix[0]), "y should be in range of matrix[x]")
+
+  lineLen := len(matrix[0])
+  for i, line := range matrix {
+    curLineLen := len(line)
+    assert.Assert(curLineLen == lineLen, "each line should have same length as previous", "curLineLen", curLineLen, "i", i, "len(matrix)", len(matrix))
+    lineLen = curLineLen
+  }
+
 	// 1. left -> right
 	// 2. right -> left
 	// 3. top -> bottom
@@ -164,20 +170,9 @@ func day4CheckCoordinate(x, y int, matrix Matrix, direction int) int {
 }
 
 func day4XmaxCount() {
-	content := day4example2 // readInput("day4.txt")
+	content := readInput("day4.txt")
 
 	matrix := readMatrix(content)
-
-	matrix.Print()
-
-	// 1. left -> right
-	// right -> left
-	// top -> bottom
-	// bottom -> top
-	// left-top -> right-bottom
-	// left-bottom -> right-top
-	// right-top -> left-bottom
-	// right-bottom -> left-top
 
 	counter := 0
 
@@ -190,6 +185,5 @@ func day4XmaxCount() {
 		}
 	}
 
-	fmt.Println("Total:", counter, string(matrix[9][9]))
-  matrix.Print()
+	fmt.Println("Total:", counter)
 }

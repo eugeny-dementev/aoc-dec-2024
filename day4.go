@@ -35,12 +35,12 @@ MXMXAXMASX`)
 type Matrix [][]byte
 
 func readMatrix(content []byte) Matrix {
-	lines := bytes.Split(content, []byte("\n"))
+	lines := bytes.Split(bytes.TrimSpace(content), []byte("\n"))
 
 	matrix := make(Matrix, len(lines))
 
 	for l, line := range lines {
-		letters := bytes.Split(line, []byte(""))
+		letters := bytes.Split(bytes.TrimSpace(line), []byte(""))
 
 		chars := make([]byte, len(letters))
 

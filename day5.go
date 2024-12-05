@@ -95,14 +95,9 @@ func day5ManualPrinting() {
 	content := readInput("day5.txt")
 
 	parts := splitByEmptyNewline(string(content))
-	fmt.Println(parts[0])
 	rulesMap = day5ReadOrderingRules(parts[0])
 
-	fmt.Printf("Rules: %v\n", rulesMap)
-
 	sections := strings.Split(parts[1], "\n")
-
-	fmt.Println("Sections: ", parts[1])
 
 	var middlesSum int64 = 0
 	var incorrectMiddlesSum int64 = 0

@@ -7,4 +7,5 @@ func main() {
 	day3ExtractMul()
 	day3ExtractMulWithCondition()
 	day4XmaxCount()
+	day5ManualPrinting()
 }

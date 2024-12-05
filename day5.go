@@ -3,7 +3,11 @@ package main
 import (
 	assert "eugeny-dementev/aoc-dec-2024/pkg"
 	"fmt"
+	"math"
 	"regexp"
+	"slices"
+	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -92,17 +96,32 @@ func day5ManualPrinting() {
 
 	parts := splitByEmptyNewline(string(content))
 	fmt.Println(parts[0])
-	rules := day5ReadOrderingRules(parts[0])
+	rulesMap = day5ReadOrderingRules(parts[0])
 
-	fmt.Printf("Content: %v\n", rules)
+	fmt.Printf("Rules: %v\n", rulesMap)
 
 	sections := strings.Split(parts[1], "\n")
 
-	fmt.Println("Sections: ", sections)
+	fmt.Println("Sections: ", parts[1])
+
+	var middlesSum int64 = 0
 
 	for _, section := range sections {
-		pages := strings.Split(section, ",")
+		pages := Section(strings.Split(section, ","))
+		sort.Sort(pages)
+		sortedSection := strings.Join(pages, ",")
 
-		fmt.Println("Pages:", pages)
+		if section == sortedSection {
+			length := len(pages)
+			middle := int(math.Ceil(float64(length)/2)) - 1
+			middleInt, err := strconv.ParseInt(pages[middle], 0, 0)
+			assert.NoError(err, "should parse pages[middle] to int with no issues", "pages[middle]", pages[middle])
+
+			fmt.Println("Correct section:", section, sortedSection, middleInt, pages[middle])
+
+			middlesSum += middleInt
+		}
 	}
+
+	fmt.Println("Sum of the middles:", middlesSum)
 }

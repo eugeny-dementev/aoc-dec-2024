@@ -68,6 +68,25 @@ func day5ReadOrderingRules(rules string) map[string][]string {
 	return rulesMap
 }
 
+var rulesMap map[string][]string
+
+type Section []string
+
+func (s Section) Len() int {
+	return len(s)
+}
+
+func (s Section) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (s Section) Less(i, j int) bool {
+	left := s[i]
+	right := s[j]
+
+	return slices.Contains(rulesMap[left], right)
+}
+
 func day5ManualPrinting() {
 	content := day5example // readInput("day5.txt")
 

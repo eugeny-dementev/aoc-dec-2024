@@ -35,6 +35,16 @@ var day5example = []byte(`47|53
 61,13,29
 97,13,75,29,47`)
 
+func splitByEmptyNewline(str string) []string {
+	strNormalized := regexp.
+		MustCompile("\r\n").
+		ReplaceAllString(str, "\n")
+
+	return regexp.
+		MustCompile(`\n\s*\n`).
+		Split(strNormalized, -1)
+}
+
 func day5ReadOrderingRules(rules []byte) map[string][]string {
 	lines := bytes.Split(rules, []byte("\n"))
 

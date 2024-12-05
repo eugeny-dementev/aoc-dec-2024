@@ -1,8 +1,9 @@
 package main
 
 import (
-	"bytes"
+	assert "eugeny-dementev/aoc-dec-2024/pkg"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -45,13 +46,19 @@ func splitByEmptyNewline(str string) []string {
 		Split(strNormalized, -1)
 }
 
-func day5ReadOrderingRules(rules []byte) map[string][]string {
-	lines := bytes.Split(rules, []byte("\n"))
+func day5ReadOrderingRules(rules string) map[string][]string {
+	lines := strings.Split(rules, "\n")
 
 	rulesMap := map[string][]string{}
 
 	for _, line := range lines {
+		if line[0] == byte(13) {
+			continue
+		}
+		assert.Assert(len(line) > 1, "line should be none-0 length", "line str", string(line), "line byte", line)
+
 		values := strings.Split(string(line), "|")
+		assert.Assert(len(values) == 2, "there should be 2 values as result of split(|)", "values", values, "line", string(line))
 		left := values[0]
 		right := values[1]
 
@@ -64,8 +71,19 @@ func day5ReadOrderingRules(rules []byte) map[string][]string {
 func day5ManualPrinting() {
 	content := day5example // readInput("day5.txt")
 
-	parts := bytes.Split(content, []byte("\n\n"))
+	parts := splitByEmptyNewline(string(content))
+	fmt.Println(parts[0])
 	rules := day5ReadOrderingRules(parts[0])
 
 	fmt.Printf("Content: %v\n", rules)
+
+	sections := strings.Split(parts[1], "\n")
+
+	fmt.Println("Sections: ", sections)
+
+	for _, section := range sections {
+		pages := strings.Split(section, ",")
+
+		fmt.Println("Pages:", pages)
+	}
 }

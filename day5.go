@@ -92,7 +92,7 @@ func (s Section) Less(i, j int) bool {
 }
 
 func day5ManualPrinting() {
-	content := day5example // readInput("day5.txt")
+	content := readInput("day5.txt")
 
 	parts := splitByEmptyNewline(string(content))
 	fmt.Println(parts[0])

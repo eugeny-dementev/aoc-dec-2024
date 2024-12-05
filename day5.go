@@ -92,7 +92,7 @@ func (s Section) Less(i, j int) bool {
 }
 
 func day5ManualPrinting() {
-	content := day5example // readInput("day5.txt")
+	content := readInput("day5.txt")
 
 	parts := splitByEmptyNewline(string(content))
 	fmt.Println(parts[0])
@@ -128,7 +128,7 @@ func day5ManualPrinting() {
 			middleInt, err := strconv.ParseInt(values[middle], 0, 0)
 			assert.NoError(err, "should parse values[middle] to int with no issues", "values[middle]", values[middle])
 
-			fmt.Println("Incorrect section:", section, sortedSection, middle, values[middle])
+			// fmt.Println("Incorrect section:", section, sortedSection, middle, values[middle])
 
 			incorrectMiddlesSum += middleInt
 		}

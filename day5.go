@@ -2,9 +2,8 @@ package main
 
 import (
 	"bytes"
-	assert "eugeny-dementev/aoc-dec-2024/pkg"
 	"fmt"
-	"strconv"
+	"strings"
 )
 
 var day5example = []byte(`47|53
@@ -36,18 +35,15 @@ var day5example = []byte(`47|53
 61,13,29
 97,13,75,29,47`)
 
-func day5ReadOrderingRules(rules []byte) map[int64][]int64 {
+func day5ReadOrderingRules(rules []byte) map[string][]string {
 	lines := bytes.Split(rules, []byte("\n"))
 
-	rulesMap := map[int64][]int64{}
+	rulesMap := map[string][]string{}
 
 	for _, line := range lines {
-		values := bytes.Split(line, []byte("|"))
-		left, err := strconv.ParseInt(string(values[0]), 0, 0)
-		assert.NoError(err, "values[0] string should be parsed correctly to int", "values[0]", string(values[0]))
-
-		right, err := strconv.ParseInt(string(values[1]), 0, 0)
-		assert.NoError(err, "values[1] string should be parsed correctly to int", "values[1]", string(values[1]))
+		values := strings.Split(string(line), "|")
+		left := values[0]
+		right := values[1]
 
 		rulesMap[left] = append(rulesMap[left], right)
 	}

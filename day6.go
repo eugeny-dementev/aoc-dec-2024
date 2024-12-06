@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"strings"
 	"time"
@@ -51,10 +52,21 @@ type Guard struct {
 	direction string
 	steps     int
 	unique    map[string]bool
+	lastThree []Point
 }
 
 func (g Guard) String() string {
 	return fmt.Sprintf("Guard(at %v,%v facing %s)", g.place.x, g.place.y, g.direction)
+}
+
+func (g *Guard) registerLastObstacle(p Point) {
+	if len(g.lastThree) < 3 {
+		g.lastThree = append(g.lastThree, p)
+	} else {
+		g.lastThree = append(g.lastThree[1:], p)
+	}
+
+	// fmt.Print("Last three obstacles", g.lastThree)
 }
 
 func (g *Guard) isOut() bool {
@@ -79,15 +91,24 @@ func (g *Guard) step() {
 }
 
 func (g *Guard) facingObstraction() bool {
+	xShift, yShift := g.place.x, g.place.y
 	switch g.direction {
 	case "^":
-		return g.myMap.getSymbol(g.place.x-1, g.place.y) == "#"
+		xShift -= 1
 	case ">":
-		return g.myMap.getSymbol(g.place.x, g.place.y+1) == "#"
+		yShift += 1
 	case "v":
-		return g.myMap.getSymbol(g.place.x+1, g.place.y) == "#"
+		xShift += 1
 	case "<":
-		return g.myMap.getSymbol(g.place.x, g.place.y-1) == "#"
+		yShift -= 1
+	}
+
+	symbol := g.myMap.getSymbol(xShift, yShift)
+
+	if symbol == "#" {
+		g.registerLastObstacle(Point{xShift, yShift})
+
+		return true
 	}
 
 	return false
@@ -164,7 +185,7 @@ func day6WalkAPath() {
 				if place != "." && place != "#" {
 					fmt.Println("Guard found", x, y)
 					places[y] = "."
-					guard = Guard{&Point{x, y}, myMap, place, 0, map[string]bool{}}
+					guard = Guard{&Point{x, y}, myMap, place, 0, map[string]bool{}, []Point{}}
 
 					isGuardFound = true
 				}

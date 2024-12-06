@@ -156,7 +156,7 @@ func (g *Guard) calculatePossibleLoopObstacle() {
 
 func (g *Guard) confirmLoopObstacle(p Point) {
 	g.confirmedLoopObstacles = append(g.confirmedLoopObstacles, p)
-	g.loopCompatibleObstacles = append(g.loopCompatibleObstacles, g.lastThree[0])
+	g.loopCompatibleObstacles = append(g.loopCompatibleObstacles, g.lastThree...)
 }
 
 func (g *Guard) isOut() bool {
@@ -256,7 +256,6 @@ func (g *Guard) getUniqueConfirmedLoopObstacles() int {
 				strconv.FormatInt(int64(obstaclePoint.y), 10),
 			}
 			key := strings.Join(xyStrs, ":")
-			fmt.Println("Unique key", key, obstaclePoint)
 			set[key] = true
 		}
 	}
@@ -266,7 +265,7 @@ func (g *Guard) getUniqueConfirmedLoopObstacles() int {
 
 func (g *Guard) startPatrol() {
 	for !g.isOut() {
-		g.printMap()
+		// g.printMap()
 
 		if g.facingObstraction() {
 			g.turnRight()
@@ -280,13 +279,13 @@ func (g *Guard) startPatrol() {
 	}
 
 	fmt.Println("Patrol is done, performed steps:", g.steps, len(g.unique))
-	fmt.Println("Confirmed loop obstacles found:", g.getUniqueConfirmedLoopObstacles(), g.confirmedLoopObstacles)
+	fmt.Println("Confirmed loop obstacles found:", g.getUniqueConfirmedLoopObstacles())
 
 	g.printMap()
 }
 
 func day6WalkAPath() {
-	input := day6example // readInput("day6.txt")
+	input := readInput("day6.txt")
 
 	var lines []string
 	sc := bufio.NewScanner(strings.NewReader(string(input)))

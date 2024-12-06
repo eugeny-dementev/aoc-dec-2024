@@ -96,7 +96,6 @@ func (g *Guard) registerLastObstacle(p Point) {
 	if len(g.lastThree) < 3 {
 		g.lastThree = append(g.lastThree, p)
 	} else {
-		g.loopCompatibleObstacles = append(g.loopCompatibleObstacles, g.lastThree[0])
 		g.lastThree = append(g.lastThree[1:], p)
 	}
 }
@@ -131,6 +130,7 @@ func (g *Guard) calculatePossibleLoopObstacle() {
 
 func (g *Guard) confirmLoopObstacle(p Point) {
 	g.confirmedLoopObstacles = append(g.confirmedLoopObstacles, p)
+	g.loopCompatibleObstacles = append(g.loopCompatibleObstacles, g.lastThree[0])
 }
 
 func (g *Guard) isOut() bool {

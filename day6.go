@@ -55,6 +55,14 @@ func (m *Map) cleanupMap() {
 	fmt.Print(cleaner)
 }
 
+func (m *Map) moveBackToRedraw() {
+	mover := ""
+	for range m.board {
+		mover = mover + "\033[1A"
+	}
+	fmt.Print(mover)
+}
+
 type Guard struct {
 	place                   *Point
 	myMap                   *Map
@@ -248,7 +256,7 @@ func (g *Guard) printMap() {
 	}
 	time.Sleep(time.Millisecond * 100)
 	if !g.isOut() {
-    g.myMap.cleanupMap()
+    g.myMap.moveBackToRedraw()
 	}
 }
 
@@ -291,7 +299,7 @@ func (g *Guard) startPatrol() {
 }
 
 func day6WalkAPath() {
-	input := day6example // readInput("day6.txt")
+	input := readInput("day6.txt")
 
 	var lines []string
 	sc := bufio.NewScanner(strings.NewReader(string(input)))

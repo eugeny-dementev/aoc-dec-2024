@@ -81,6 +81,16 @@ func (g *Guard) isPossibleLoopObstacle(x, y int) bool {
 	return false
 }
 
+func (g *Guard) isConfirmedLoopObstacle(x, y int) bool {
+	for _, obstaclePoint := range g.confirmedLoopObstacles {
+		if obstaclePoint.x == x && obstaclePoint.y == y {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (g *Guard) registerLastObstacle(p Point) {
 	if len(g.lastThree) < 3 {
 		g.lastThree = append(g.lastThree, p)
@@ -115,6 +125,10 @@ func (g *Guard) calculatePossibleLoopObstacle() {
 	}
 
 	g.possibleLoopObstacles = append(g.possibleLoopObstacles, possibleObstacle)
+}
+
+func (g *Guard) confirmLoopObstacle(p Point) {
+	g.confirmedLoopObstacles = append(g.confirmedLoopObstacles, p)
 }
 
 func (g *Guard) isOut() bool {
@@ -186,6 +200,8 @@ func (g *Guard) printMap() {
 				fmt.Print(g.direction)
 			} else if place == "#" && g.isOneOfLast3(x, y) {
 				fmt.Print("X")
+			} else if g.isConfirmedLoopObstacle(x, y) {
+				fmt.Print("8")
 			} else if g.isPossibleLoopObstacle(x, y) {
 				fmt.Print("O")
 			} else {
@@ -211,9 +227,14 @@ func (g *Guard) startPatrol() {
 		}
 
 		g.step()
+
+		if g.isPossibleLoopObstacle(g.place.x, g.place.y) {
+			g.confirmLoopObstacle(Point{g.place.x, g.place.y})
+		}
 	}
 
 	fmt.Println("Patrol is done, performed steps:", g.steps, len(g.unique))
+	fmt.Println("Confirmed loop obstacles found:", len(g.confirmedLoopObstacles))
 
 	g.printMap()
 }
@@ -242,12 +263,14 @@ func day6WalkAPath() {
 					fmt.Println("Guard found", x, y)
 					places[y] = "."
 					guard = Guard{
-						&Point{x, y},
-						myMap, place, 0,
-						map[string]bool{},
-						[]Point{},
-						[]Point{},
-						[]Point{},
+						place:                  &Point{x, y},
+						myMap:                  myMap,
+						direction:              place,
+						steps:                  0,
+						unique:                 map[string]bool{},
+						lastThree:              []Point{},
+						possibleLoopObstacles:  []Point{},
+						confirmedLoopObstacles: []Point{},
 					}
 
 					isGuardFound = true

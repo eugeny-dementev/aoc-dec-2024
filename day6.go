@@ -144,7 +144,11 @@ func (g *Guard) startPatrol() {
 func day6WalkAPath() {
 	input := day6example // readInput("day6.txt")
 
-	lines := strings.Split(string(input), "\n")
+	var lines []string
+	sc := bufio.NewScanner(strings.NewReader(string(input)))
+	for sc.Scan() {
+		lines = append(lines, sc.Text())
+	}
 
 	myMap := &Map{[][]string{}}
 

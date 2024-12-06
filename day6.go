@@ -47,6 +47,14 @@ func (m *Map) getSymbol(x, y int) string {
 	return m.board[x][y]
 }
 
+func (m *Map) cleanupMap() {
+	cleaner := ""
+	for range m.board {
+		cleaner = cleaner + "\033[1A\033[K"
+	}
+	fmt.Print(cleaner)
+}
+
 type Guard struct {
 	place                   *Point
 	myMap                   *Map
@@ -240,9 +248,7 @@ func (g *Guard) printMap() {
 	}
 	time.Sleep(time.Millisecond * 100)
 	if !g.isOut() {
-		for range g.myMap.board {
-			fmt.Printf("\033[1A\033[K")
-		}
+    g.myMap.cleanupMap()
 	}
 }
 
@@ -265,7 +271,7 @@ func (g *Guard) getUniqueConfirmedLoopObstacles() int {
 
 func (g *Guard) startPatrol() {
 	for !g.isOut() {
-		// g.printMap()
+		g.printMap()
 
 		if g.facingObstraction() {
 			g.turnRight()
@@ -285,7 +291,7 @@ func (g *Guard) startPatrol() {
 }
 
 func day6WalkAPath() {
-	input := readInput("day6.txt")
+	input := day6example // readInput("day6.txt")
 
 	var lines []string
 	sc := bufio.NewScanner(strings.NewReader(string(input)))

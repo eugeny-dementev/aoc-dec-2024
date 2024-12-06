@@ -49,12 +49,12 @@ func (m *Map) getSymbol(x, y int) string {
 type Guard struct {
 	place                  *Point
 	myMap                  *Map
-	direction              string
-	steps                  int
 	unique                 map[string]bool
+	direction              string
 	lastThree              []Point
 	possibleLoopObstacles  []Point
 	confirmedLoopObstacles []Point
+	steps                  int
 }
 
 func (g Guard) String() string {

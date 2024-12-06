@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -92,6 +93,29 @@ func (g *Guard) isConfirmedLoopObstacle(x, y int) bool {
 	return false
 }
 
+func (g *Guard) findLoopCompatibleObstaclesOnTheWay() {
+	for _, obstaclePoint := range g.loopCompatibleObstacles {
+		switch g.direction {
+		case "v":
+			if obstaclePoint.y < g.place.y && obstaclePoint.x < g.place.x {
+				g.possibleLoopObstacles = append(g.possibleLoopObstacles, Point{g.place.x, obstaclePoint.y - 1})
+			}
+		case "<":
+			if obstaclePoint.x < g.place.x && obstaclePoint.y > g.place.y {
+				g.possibleLoopObstacles = append(g.possibleLoopObstacles, Point{obstaclePoint.x - 1, g.place.y})
+			}
+		case "^":
+			if obstaclePoint.y > g.place.y && obstaclePoint.x > g.place.x {
+				g.possibleLoopObstacles = append(g.possibleLoopObstacles, Point{g.place.x, obstaclePoint.y + 1})
+			}
+		case ">":
+			if obstaclePoint.x > g.place.x && obstaclePoint.y < g.place.y {
+				g.possibleLoopObstacles = append(g.possibleLoopObstacles, Point{obstaclePoint.x + 1, g.place.y})
+			}
+		}
+	}
+}
+
 func (g *Guard) registerLastObstacle(p Point) {
 	if len(g.lastThree) < 3 {
 		g.lastThree = append(g.lastThree, p)
@@ -126,6 +150,8 @@ func (g *Guard) calculatePossibleLoopObstacle() {
 	}
 
 	g.possibleLoopObstacles = append(g.possibleLoopObstacles, possibleObstacle)
+
+	g.findLoopCompatibleObstaclesOnTheWay()
 }
 
 func (g *Guard) confirmLoopObstacle(p Point) {
@@ -220,9 +246,27 @@ func (g *Guard) printMap() {
 	}
 }
 
+func (g *Guard) getUniqueConfirmedLoopObstacles() int {
+	set := map[string]bool{}
+
+	for _, obstaclePoint := range g.confirmedLoopObstacles {
+		if obstaclePoint.x >= 0 && obstaclePoint.x < g.myMap.getHeight() && obstaclePoint.y >= 0 && obstaclePoint.y < g.myMap.getWidth() {
+			xyStrs := []string{
+				strconv.FormatInt(int64(obstaclePoint.x), 10),
+				strconv.FormatInt(int64(obstaclePoint.y), 10),
+			}
+			key := strings.Join(xyStrs, ":")
+			fmt.Println("Unique key", key, obstaclePoint)
+			set[key] = true
+		}
+	}
+
+	return len(set)
+}
+
 func (g *Guard) startPatrol() {
 	for !g.isOut() {
-		// g.printMap()
+		g.printMap()
 
 		if g.facingObstraction() {
 			g.turnRight()
@@ -236,7 +280,7 @@ func (g *Guard) startPatrol() {
 	}
 
 	fmt.Println("Patrol is done, performed steps:", g.steps, len(g.unique))
-	fmt.Println("Confirmed loop obstacles found:", len(g.confirmedLoopObstacles), g.confirmedLoopObstacles)
+	fmt.Println("Confirmed loop obstacles found:", g.getUniqueConfirmedLoopObstacles(), g.confirmedLoopObstacles)
 
 	g.printMap()
 }

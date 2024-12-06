@@ -115,35 +115,28 @@ func (g *Guard) isConfirmedLoopObstacle(x, y int) bool {
 
 func (g *Guard) findLoopCompatibleObstaclesOnTheWay() {
 	for _, obstaclePoint := range g.loopCompatibleObstacles {
+		var newObstacleOnTheWay Point
 		switch g.direction {
 		case "v":
 			if obstaclePoint.y < g.place.y && obstaclePoint.x < g.place.x {
-				newObstacleOnTheWay := Point{g.place.x, obstaclePoint.y - 1}
-				if !g.myMap.isObstacle(newObstacleOnTheWay.x, newObstacleOnTheWay.y) {
-					g.possibleLoopObstacles = append(g.possibleLoopObstacles, newObstacleOnTheWay)
-				}
+				newObstacleOnTheWay = Point{g.place.x, obstaclePoint.y - 1}
 			}
 		case "<":
 			if obstaclePoint.x < g.place.x && obstaclePoint.y > g.place.y {
-				newObstacleOnTheWay := Point{obstaclePoint.x - 1, g.place.y}
-				if !g.myMap.isObstacle(newObstacleOnTheWay.x, newObstacleOnTheWay.y) {
-					g.possibleLoopObstacles = append(g.possibleLoopObstacles, newObstacleOnTheWay)
-				}
+				newObstacleOnTheWay = Point{obstaclePoint.x - 1, g.place.y}
 			}
 		case "^":
 			if obstaclePoint.y > g.place.y && obstaclePoint.x > g.place.x {
-				newObstacleOnTheWay := Point{g.place.x, obstaclePoint.y + 1}
-				if !g.myMap.isObstacle(newObstacleOnTheWay.x, newObstacleOnTheWay.y) {
-					g.possibleLoopObstacles = append(g.possibleLoopObstacles, newObstacleOnTheWay)
-				}
+				newObstacleOnTheWay = Point{g.place.x, obstaclePoint.y + 1}
 			}
 		case ">":
 			if obstaclePoint.x > g.place.x && obstaclePoint.y < g.place.y {
-				newObstacleOnTheWay := Point{obstaclePoint.x + 1, g.place.y}
-				if !g.myMap.isObstacle(newObstacleOnTheWay.x, newObstacleOnTheWay.y) {
-					g.possibleLoopObstacles = append(g.possibleLoopObstacles, newObstacleOnTheWay)
-				}
+				newObstacleOnTheWay = Point{obstaclePoint.x + 1, g.place.y}
 			}
+		}
+
+		if !g.myMap.isObstacle(newObstacleOnTheWay.x, newObstacleOnTheWay.y) {
+			g.possibleLoopObstacles = append(g.possibleLoopObstacles, newObstacleOnTheWay)
 		}
 	}
 }

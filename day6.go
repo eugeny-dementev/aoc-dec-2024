@@ -47,6 +47,10 @@ func (m *Map) getSymbol(x, y int) string {
 	return m.board[x][y]
 }
 
+func (m *Map) isObstacle(x, y int) bool {
+	return m.getSymbol(x, y) == "#"
+}
+
 func (m *Map) cleanupMap() {
 	cleaner := ""
 	for range m.board {
@@ -114,19 +118,31 @@ func (g *Guard) findLoopCompatibleObstaclesOnTheWay() {
 		switch g.direction {
 		case "v":
 			if obstaclePoint.y < g.place.y && obstaclePoint.x < g.place.x {
-				g.possibleLoopObstacles = append(g.possibleLoopObstacles, Point{g.place.x, obstaclePoint.y - 1})
+				newObstacleOnTheWay := Point{g.place.x, obstaclePoint.y - 1}
+				if !g.myMap.isObstacle(newObstacleOnTheWay.x, newObstacleOnTheWay.y) {
+					g.possibleLoopObstacles = append(g.possibleLoopObstacles, newObstacleOnTheWay)
+				}
 			}
 		case "<":
 			if obstaclePoint.x < g.place.x && obstaclePoint.y > g.place.y {
-				g.possibleLoopObstacles = append(g.possibleLoopObstacles, Point{obstaclePoint.x - 1, g.place.y})
+				newObstacleOnTheWay := Point{obstaclePoint.x - 1, g.place.y}
+				if !g.myMap.isObstacle(newObstacleOnTheWay.x, newObstacleOnTheWay.y) {
+					g.possibleLoopObstacles = append(g.possibleLoopObstacles, newObstacleOnTheWay)
+				}
 			}
 		case "^":
 			if obstaclePoint.y > g.place.y && obstaclePoint.x > g.place.x {
-				g.possibleLoopObstacles = append(g.possibleLoopObstacles, Point{g.place.x, obstaclePoint.y + 1})
+				newObstacleOnTheWay := Point{g.place.x, obstaclePoint.y + 1}
+				if !g.myMap.isObstacle(newObstacleOnTheWay.x, newObstacleOnTheWay.y) {
+					g.possibleLoopObstacles = append(g.possibleLoopObstacles, newObstacleOnTheWay)
+				}
 			}
 		case ">":
 			if obstaclePoint.x > g.place.x && obstaclePoint.y < g.place.y {
-				g.possibleLoopObstacles = append(g.possibleLoopObstacles, Point{obstaclePoint.x + 1, g.place.y})
+				newObstacleOnTheWay := Point{obstaclePoint.x + 1, g.place.y}
+				if !g.myMap.isObstacle(newObstacleOnTheWay.x, newObstacleOnTheWay.y) {
+					g.possibleLoopObstacles = append(g.possibleLoopObstacles, newObstacleOnTheWay)
+				}
 			}
 		}
 	}
@@ -165,7 +181,9 @@ func (g *Guard) calculatePossibleLoopObstacle() {
 		possibleObstacle.y = lastOfThree.y + 1
 	}
 
-	g.possibleLoopObstacles = append(g.possibleLoopObstacles, possibleObstacle)
+	if !g.myMap.isObstacle(possibleObstacle.x, possibleObstacle.y) {
+		g.possibleLoopObstacles = append(g.possibleLoopObstacles, possibleObstacle)
+	}
 
 	g.findLoopCompatibleObstaclesOnTheWay()
 }
@@ -238,25 +256,27 @@ func (g *Guard) turnRight() {
 }
 
 func (g *Guard) printMap() {
+	mapstring := ""
 	for x, line := range g.myMap.board {
 		for y, place := range line {
 			if x == g.place.x && y == g.place.y {
-				fmt.Print(g.direction)
+				mapstring += g.direction
 			} else if place == "#" && g.isOneOfLast3(x, y) {
-				fmt.Print("X")
+				mapstring += "X"
 			} else if g.isConfirmedLoopObstacle(x, y) {
-				fmt.Print("8")
+				mapstring += "8"
 			} else if g.isPossibleLoopObstacle(x, y) {
-				fmt.Print("O")
+				mapstring += "O"
 			} else {
-				fmt.Print(place)
+				mapstring += place
 			}
 		}
-		fmt.Print("\n")
+		mapstring += "\n"
 	}
+	fmt.Print(mapstring)
 	time.Sleep(time.Millisecond * 100)
 	if !g.isOut() {
-    g.myMap.moveBackToRedraw()
+		g.myMap.moveBackToRedraw()
 	}
 }
 

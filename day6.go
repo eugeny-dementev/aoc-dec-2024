@@ -50,7 +50,7 @@ type Guard struct {
 	myMap     *Map
 	direction string
 	steps     int
-  unique map[string]bool
+	unique    map[string]bool
 }
 
 func (g Guard) String() string {
@@ -62,7 +62,7 @@ func (g *Guard) isOut() bool {
 }
 
 func (g *Guard) step() {
-  g.unique[fmt.Sprintf("%v:%v", g.place.x, g.place.y)] = true
+	g.unique[fmt.Sprintf("%v:%v", g.place.x, g.place.y)] = true
 
 	switch g.direction {
 	case "^":
@@ -117,15 +117,17 @@ func (g *Guard) printMap() {
 		}
 		fmt.Print("\n")
 	}
-	time.Sleep(time.Millisecond * 100)
-	for range g.myMap.board {
-		fmt.Printf("\033[1A\033[K")
+	time.Sleep(time.Millisecond * 33)
+	if !g.isOut() {
+		for range g.myMap.board {
+			fmt.Printf("\033[1A\033[K")
+		}
 	}
 }
 
 func (g *Guard) startPatrol() {
 	for !g.isOut() {
-		//g.printMap()
+		g.printMap()
 
 		if g.facingObstraction() {
 			g.turnRight()
@@ -135,12 +137,14 @@ func (g *Guard) startPatrol() {
 	}
 
 	fmt.Println("Patrol is done, performed steps:", g.steps, len(g.unique))
+
+	g.printMap()
 }
 
 func day6WalkAPath() {
-	input := readInput("day6.txt")
+	input := day6example // readInput("day6.txt")
 
-	lines := strings.Split(string(input), "\r\n")
+	lines := strings.Split(string(input), "\n")
 
 	myMap := &Map{[][]string{}}
 

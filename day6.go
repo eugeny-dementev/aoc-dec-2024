@@ -59,6 +59,16 @@ func (g Guard) String() string {
 	return fmt.Sprintf("Guard(at %v,%v facing %s)", g.place.x, g.place.y, g.direction)
 }
 
+func (g *Guard) isOneOfLast3(x, y int) bool {
+	for _, obstaclePoint := range g.lastThree {
+		if obstaclePoint.x == x && obstaclePoint.y == y {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (g *Guard) registerLastObstacle(p Point) {
 	if len(g.lastThree) < 3 {
 		g.lastThree = append(g.lastThree, p)
@@ -132,13 +142,15 @@ func (g *Guard) printMap() {
 		for y, place := range line {
 			if x == g.place.x && y == g.place.y {
 				fmt.Print(g.direction)
+			} else if place == "#" && g.isOneOfLast3(x, y) {
+				fmt.Print("X")
 			} else {
 				fmt.Print(place)
 			}
 		}
 		fmt.Print("\n")
 	}
-	time.Sleep(time.Millisecond * 33)
+	time.Sleep(time.Millisecond * 100)
 	if !g.isOut() {
 		for range g.myMap.board {
 			fmt.Printf("\033[1A\033[K")

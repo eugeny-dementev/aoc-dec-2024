@@ -47,12 +47,14 @@ func (m *Map) getSymbol(x, y int) string {
 }
 
 type Guard struct {
-	place     *Point
-	myMap     *Map
-	direction string
-	steps     int
-	unique    map[string]bool
-	lastThree []Point
+	place                  *Point
+	myMap                  *Map
+	direction              string
+	steps                  int
+	unique                 map[string]bool
+	lastThree              []Point
+	possibleLoopObstacles  []Point
+	confirmedLoopObstacles []Point
 }
 
 func (g Guard) String() string {
@@ -69,14 +71,50 @@ func (g *Guard) isOneOfLast3(x, y int) bool {
 	return false
 }
 
+func (g *Guard) isPossibleLoopObstacle(x, y int) bool {
+	for _, obstaclePoint := range g.possibleLoopObstacles {
+		if obstaclePoint.x == x && obstaclePoint.y == y {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (g *Guard) registerLastObstacle(p Point) {
 	if len(g.lastThree) < 3 {
 		g.lastThree = append(g.lastThree, p)
 	} else {
 		g.lastThree = append(g.lastThree[1:], p)
 	}
+}
 
-	// fmt.Print("Last three obstacles", g.lastThree)
+func (g *Guard) calculatePossibleLoopObstacle() {
+	if len(g.lastThree) < 3 {
+		return
+	}
+
+	firstOfThree := g.lastThree[0]
+	lastOfThree := g.lastThree[2]
+
+	possibleObstacle := Point{}
+
+	switch g.direction {
+	case "^":
+		possibleObstacle.x = lastOfThree.x + 1
+		possibleObstacle.y = firstOfThree.y + 1
+	case ">":
+		possibleObstacle.x = firstOfThree.x + 1
+		possibleObstacle.y = lastOfThree.y - 1
+	case "v":
+		possibleObstacle.x = lastOfThree.x - 1
+		possibleObstacle.y = firstOfThree.y - 1
+	case "<":
+		possibleObstacle.x = firstOfThree.x - 1
+		possibleObstacle.y = lastOfThree.y + 1
+	}
+
+	g.possibleLoopObstacles = append(g.possibleLoopObstacles, possibleObstacle)
 }
 
 func (g *Guard) isOut() bool {
@@ -118,6 +156,10 @@ func (g *Guard) facingObstraction() bool {
 	if symbol == "#" {
 		g.registerLastObstacle(Point{xShift, yShift})
 
+		if len(g.lastThree) == 3 {
+			g.calculatePossibleLoopObstacle()
+		}
+
 		return true
 	}
 
@@ -144,6 +186,8 @@ func (g *Guard) printMap() {
 				fmt.Print(g.direction)
 			} else if place == "#" && g.isOneOfLast3(x, y) {
 				fmt.Print("X")
+			} else if g.isPossibleLoopObstacle(x, y) {
+				fmt.Print("O")
 			} else {
 				fmt.Print(place)
 			}
@@ -197,7 +241,14 @@ func day6WalkAPath() {
 				if place != "." && place != "#" {
 					fmt.Println("Guard found", x, y)
 					places[y] = "."
-					guard = Guard{&Point{x, y}, myMap, place, 0, map[string]bool{}, []Point{}}
+					guard = Guard{
+						&Point{x, y},
+						myMap, place, 0,
+						map[string]bool{},
+						[]Point{},
+						[]Point{},
+						[]Point{},
+					}
 
 					isGuardFound = true
 				}

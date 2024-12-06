@@ -47,14 +47,15 @@ func (m *Map) getSymbol(x, y int) string {
 }
 
 type Guard struct {
-	place                  *Point
-	myMap                  *Map
-	unique                 map[string]bool
-	direction              string
-	lastThree              []Point
-	possibleLoopObstacles  []Point
-	confirmedLoopObstacles []Point
-	steps                  int
+	place                   *Point
+	myMap                   *Map
+	unique                  map[string]bool
+	direction               string
+	lastThree               []Point
+	possibleLoopObstacles   []Point
+	confirmedLoopObstacles  []Point
+	loopCompatibleObstacles []Point
+	steps                   int
 }
 
 func (g Guard) String() string {
@@ -95,6 +96,7 @@ func (g *Guard) registerLastObstacle(p Point) {
 	if len(g.lastThree) < 3 {
 		g.lastThree = append(g.lastThree, p)
 	} else {
+		g.loopCompatibleObstacles = append(g.loopCompatibleObstacles, g.lastThree[0])
 		g.lastThree = append(g.lastThree[1:], p)
 	}
 }
@@ -220,7 +222,7 @@ func (g *Guard) printMap() {
 
 func (g *Guard) startPatrol() {
 	for !g.isOut() {
-		g.printMap()
+		// g.printMap()
 
 		if g.facingObstraction() {
 			g.turnRight()
@@ -234,7 +236,7 @@ func (g *Guard) startPatrol() {
 	}
 
 	fmt.Println("Patrol is done, performed steps:", g.steps, len(g.unique))
-	fmt.Println("Confirmed loop obstacles found:", len(g.confirmedLoopObstacles))
+	fmt.Println("Confirmed loop obstacles found:", len(g.confirmedLoopObstacles), g.confirmedLoopObstacles)
 
 	g.printMap()
 }
@@ -263,14 +265,15 @@ func day6WalkAPath() {
 					fmt.Println("Guard found", x, y)
 					places[y] = "."
 					guard = Guard{
-						place:                  &Point{x, y},
-						myMap:                  myMap,
-						direction:              place,
-						steps:                  0,
-						unique:                 map[string]bool{},
-						lastThree:              []Point{},
-						possibleLoopObstacles:  []Point{},
-						confirmedLoopObstacles: []Point{},
+						place:                   &Point{x, y},
+						myMap:                   myMap,
+						direction:               place,
+						steps:                   0,
+						unique:                  map[string]bool{},
+						lastThree:               []Point{},
+						possibleLoopObstacles:   []Point{},
+						confirmedLoopObstacles:  []Point{},
+						loopCompatibleObstacles: []Point{},
 					}
 
 					isGuardFound = true

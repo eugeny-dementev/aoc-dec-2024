@@ -100,15 +100,16 @@ func (m *Map) rotate() {
 }
 
 type Guard struct {
-	place                   *Point
-	myMap                   *Map
-	unique                  map[string]bool
-	direction               string
-	lastThree               []Point
-	possibleLoopObstacles   []Point
-	confirmedLoopObstacles  []Point
-	loopCompatibleObstacles []Point
-	steps                   int
+	place                    *Point
+	myMap                    *Map
+	unique                   map[string]bool
+	visibleDirectionPointSet map[string]bool
+	direction                string
+	lastThree                []Point
+	possibleLoopObstacles    []Point
+	confirmedLoopObstacles   []Point
+	loopCompatibleObstacles  []Point
+	steps                    int
 }
 
 func (g Guard) String() string {
@@ -206,7 +207,7 @@ func (g *Guard) calculatePossibleLoopObstacle() {
 		possibleObstacle.y = lastOfThree.y + 1
 	}
 
-	if !g.myMap.isObstacle(possibleObstacle.x, possibleObstacle.y) {
+	if !g.myMap.isObstacle(possibleObstacle.x, possibleObstacle.y) && !g.isVisiblePoint(possibleObstacle.x, possibleObstacle.y) {
 		g.possibleLoopObstacles = append(g.possibleLoopObstacles, possibleObstacle)
 	}
 
@@ -363,7 +364,49 @@ func (g *Guard) getUniqueConfirmedLoopObstacles() int {
 	return len(set)
 }
 
+func (g *Guard) calculateVisiblePlaces() {
+	switch g.direction {
+	case "v":
+		for x := g.place.x; x < g.myMap.getHeight() && !g.myMap.isObstacle(x, g.place.y); x++ {
+			g.registerVisiblePoint(x, g.place.y)
+		}
+	case "<":
+		for y := g.place.y; y >= 0 && !g.myMap.isObstacle(g.place.x, y); y-- {
+			g.registerVisiblePoint(g.place.x, y)
+		}
+	case "^":
+		for x := g.place.x; x >= 0 && !g.myMap.isObstacle(x, g.place.y); x-- {
+			g.registerVisiblePoint(x, g.place.y)
+		}
+	case ">":
+		for y := g.place.y; y < g.myMap.getWidth() && !g.myMap.isObstacle(g.place.x, y); y++ {
+			g.registerVisiblePoint(g.place.x, y)
+		}
+	}
+}
+
+func (g *Guard) registerVisiblePoint(x, y int) {
+	coords := []string{
+		strconv.FormatInt(int64(x), 10),
+		strconv.FormatInt(int64(y), 10),
+	}
+	key := strings.Join(coords, ":")
+	g.visibleDirectionPointSet[key] = true
+}
+
+func (g *Guard) isVisiblePoint(x, y int) bool {
+	coords := []string{
+		strconv.FormatInt(int64(x), 10),
+		strconv.FormatInt(int64(y), 10),
+	}
+	key := strings.Join(coords, ":")
+
+	return g.visibleDirectionPointSet[key]
+}
+
 func (g *Guard) startPatrol(visualize bool) {
+	g.calculateVisiblePlaces()
+
 	for !g.isOut() {
 		if visualize {
 			g.printFrame()
@@ -410,15 +453,16 @@ func day6WalkAPath() {
 					fmt.Println("Guard found", x, y)
 					places[y] = "."
 					guard = Guard{
-						place:                   &Point{x, y},
-						myMap:                   myMap,
-						direction:               place,
-						steps:                   0,
-						unique:                  map[string]bool{},
-						lastThree:               []Point{},
-						possibleLoopObstacles:   []Point{},
-						confirmedLoopObstacles:  []Point{},
-						loopCompatibleObstacles: []Point{},
+						place:                    &Point{x, y},
+						myMap:                    myMap,
+						direction:                place,
+						steps:                    0,
+						unique:                   map[string]bool{},
+						lastThree:                []Point{},
+						possibleLoopObstacles:    []Point{},
+						confirmedLoopObstacles:   []Point{},
+						loopCompatibleObstacles:  []Point{},
+						visibleDirectionPointSet: map[string]bool{},
 					}
 
 					isGuardFound = true
@@ -427,6 +471,11 @@ func day6WalkAPath() {
 		}
 	}
 
+	guard.turnMap()
+	guard.turnMap()
+	guard.turnMap()
+	guard.calculateVisiblePlaces()
+	fmt.Println("Visible points", guard.visibleDirectionPointSet)
 	guard.printMap()
-	guard.startPatrol(true)
+	guard.startPatrol(false)
 }

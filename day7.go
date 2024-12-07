@@ -24,20 +24,12 @@ type Context struct {
 }
 
 func (c *Context) check(result, left, right int64, values []int64) {
-	if len(values) == 0 {
-		return
-	}
-
 	sumRes := left + right
 
 	if sumRes == result && len(values) == 0 {
 		c.validAnswers[result] = true
 		return
 	}
-
-	right = values[0]
-
-	c.check(result, sumRes, right, values[1:])
 
 	mulRes := left * right
 
@@ -46,21 +38,34 @@ func (c *Context) check(result, left, right int64, values []int64) {
 		return
 	}
 
+	if len(values) == 0 {
+		return
+	}
+
 	right = values[0]
 
+	c.check(result, sumRes, right, values[1:])
 	c.check(result, mulRes, right, values[1:])
 }
 
-func (c *Context) evaluate() {
+func (c *Context) evaluate() int64{
 	for result, values := range c.equations {
 		left := values[0]
 		right := values[1]
 		c.check(result, left, right, values[2:])
 	}
+
+  var result int64
+
+  for value, _ := range c.validAnswers {
+    result += value
+  }
+
+  return result
 }
 
 func day7CalcPath() {
-	input := day7example // readInput("day7.txt")
+	input := readInput("day7.txt")
 
 	context := Context{
 		map[int64][]int64{},
@@ -87,9 +92,7 @@ func day7CalcPath() {
 		context.equations[result] = values
 	}
 
-	fmt.Println("Equations:", context.equations)
+  result := context.evaluate()
 
-  context.evaluate()
-
-  fmt.Println("Valid:", context.validAnswers)
+  fmt.Println("Result:", result)
 }

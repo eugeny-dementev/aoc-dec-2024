@@ -67,6 +67,38 @@ func (m *Map) moveBackToRedraw() {
 	fmt.Print(mover)
 }
 
+func (m *Map) rotate() {
+	matrix := m.board
+
+	matrixSize := len(matrix)
+
+	startRow := 0
+	endRow := m.getWidth() - 1
+	startColumn := 0
+	endColumn := m.getHeight() - 1
+	for x := 0; x < matrixSize; x++ {
+		totalCycles := endRow - startRow
+
+		for y := 0; y < totalCycles; y++ {
+			temp := matrix[startRow][startColumn+y]
+			matrix[startRow][startColumn+y] = matrix[endRow-y][startColumn]
+
+			matrix[endRow-y][startColumn] = matrix[endRow][endColumn-y]
+
+			matrix[endRow][endColumn-y] = matrix[startRow+y][endColumn]
+
+			matrix[startRow+y][endColumn] = temp
+		}
+
+		startRow = startRow + 1
+		endRow = endRow - 1
+		startColumn = startColumn + 1
+		endColumn = endColumn - 1
+	}
+
+	m.board = matrix
+}
+
 type Guard struct {
 	place                   *Point
 	myMap                   *Map
@@ -248,7 +280,48 @@ func (g *Guard) turnRight() {
 	}
 }
 
+func (g *Guard) turnMap() { // for debugging
+	g.myMap.rotate()
+
+	curX, curY := g.place.x, g.place.y
+
+	g.place.x = curY
+	g.place.y = g.myMap.getWidth() - 1 - curX
+
+	switch g.direction {
+	case "^":
+		g.direction = ">"
+	case ">":
+		g.direction = "v"
+	case "v":
+		g.direction = "<"
+	case "<":
+		g.direction = "^"
+	}
+}
+
 func (g *Guard) printMap() {
+	mapstring := ""
+	for x, line := range g.myMap.board {
+		for y, place := range line {
+			if x == g.place.x && y == g.place.y {
+				mapstring += g.direction
+			} else if place == "#" && g.isOneOfLast3(x, y) {
+				mapstring += "X"
+			} else if g.isConfirmedLoopObstacle(x, y) {
+				mapstring += "8"
+			} else if g.isPossibleLoopObstacle(x, y) {
+				mapstring += "O"
+			} else {
+				mapstring += place
+			}
+		}
+		mapstring += "\n"
+	}
+	fmt.Print(mapstring)
+}
+
+func (g *Guard) printFrame() {
 	mapstring := ""
 	for x, line := range g.myMap.board {
 		for y, place := range line {
@@ -290,9 +363,11 @@ func (g *Guard) getUniqueConfirmedLoopObstacles() int {
 	return len(set)
 }
 
-func (g *Guard) startPatrol() {
+func (g *Guard) startPatrol(visualize bool) {
 	for !g.isOut() {
-		g.printMap()
+		if visualize {
+			g.printFrame()
+		}
 
 		if g.facingObstraction() {
 			g.turnRight()
@@ -312,7 +387,7 @@ func (g *Guard) startPatrol() {
 }
 
 func day6WalkAPath() {
-	input := readInput("day6.txt")
+	input := day6example // readInput("day6.txt")
 
 	var lines []string
 	sc := bufio.NewScanner(strings.NewReader(string(input)))
@@ -352,5 +427,10 @@ func day6WalkAPath() {
 		}
 	}
 
-	guard.startPatrol()
+	guard.turnMap()
+	guard.turnMap()
+	guard.turnMap()
+	guard.turnMap()
+	guard.printMap()
+	guard.startPatrol(false)
 }

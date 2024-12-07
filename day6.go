@@ -340,7 +340,7 @@ func (g *Guard) printFrame() {
 		mapstring += "\n"
 	}
 	fmt.Print(mapstring)
-	time.Sleep(time.Millisecond * 100)
+	time.Sleep(time.Millisecond * 500)
 	if !g.isOut() {
 		g.myMap.moveBackToRedraw()
 	}
@@ -371,12 +371,12 @@ func (g *Guard) startPatrol(visualize bool) {
 
 		if g.facingObstraction() {
 			g.turnRight()
-		}
+		} else {
+			g.step()
 
-		g.step()
-
-		if g.isPossibleLoopObstacle(g.place.x, g.place.y) {
-			g.confirmLoopObstacle(Point{g.place.x, g.place.y})
+			if g.isPossibleLoopObstacle(g.place.x, g.place.y) {
+				g.confirmLoopObstacle(Point{g.place.x, g.place.y})
+			}
 		}
 	}
 
@@ -387,7 +387,7 @@ func (g *Guard) startPatrol(visualize bool) {
 }
 
 func day6WalkAPath() {
-	input := day6example // readInput("day6.txt")
+	input := readInput("day6.txt")
 
 	var lines []string
 	sc := bufio.NewScanner(strings.NewReader(string(input)))
@@ -427,10 +427,6 @@ func day6WalkAPath() {
 		}
 	}
 
-	guard.turnMap()
-	guard.turnMap()
-	guard.turnMap()
-	guard.turnMap()
 	guard.printMap()
-	guard.startPatrol(false)
+	guard.startPatrol(true)
 }

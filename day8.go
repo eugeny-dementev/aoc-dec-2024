@@ -28,6 +28,32 @@ type Day8Map struct {
 func (m *Day8Map) getHeight() int { return len(m.board) }
 func (m *Day8Map) getWidth() int  { return len(m.board[0]) }
 
+func (m *Day8Map) getAntiNodeCount() int {
+	counter := 0
+
+	for _, in := range m.antinodesSet {
+		for range in {
+			counter++
+		}
+	}
+
+	return counter
+}
+
+func (m *Day8Map) getSuperAntiNodeCounter() int {
+  counter := 0
+
+  for x, line := range m.board {
+    for y := range line {
+      if m.isSuperAntiNode(Point{x, y}) {
+        counter++
+      }
+    }
+  }
+
+  return counter
+}
+
 func (m *Day8Map) addAntiNode(p Point) {
 	if !m.isFree(p) || m.isOut(p) {
 		return
@@ -86,6 +112,22 @@ func (m *Day8Map) isAntiNode(p Point) bool {
 	return ok
 }
 
+func (m *Day8Map) isSuperAntiNode(p Point) bool {
+  if m.isAntiNode(p) {
+    return true
+  }
+
+  _, ok := m.antenasSet[p.x]
+
+  if !ok {
+    return false
+  }
+
+  _, ok = m.antenasSet[p.x][p.y]
+
+  return ok
+}
+
 func (m *Day8Map) checkPair(p1 Point, points []Point) {
 	if len(points) == 0 {
 		return
@@ -96,12 +138,24 @@ func (m *Day8Map) checkPair(p1 Point, points []Point) {
 		ydiff := p1.y - p2.y
 
 		a1x := p1.x + xdiff
-		a2x := p2.x - xdiff
 		a1y := p1.y + ydiff
+
+		a2x := p2.x - xdiff
 		a2y := p2.y - ydiff
 
-		m.addAntiNode(Point{a1x, a1y})
-		m.addAntiNode(Point{a2x, a2y})
+		for !m.isOut(Point{a1x, a1y}) {
+			m.addAntiNode(Point{a1x, a1y})
+
+			a1x += xdiff
+			a1y += ydiff
+		}
+
+		for !m.isOut(Point{a2x, a2y}) {
+			m.addAntiNode(Point{a2x, a2y})
+
+			a2x -= xdiff
+			a2y -= ydiff
+		}
 	}
 
 	p1 = points[0]
@@ -126,10 +180,10 @@ func (m *Day8Map) printMap() {
 				mapStr += symbol
 			}
 		}
-    mapStr += "\n"
+		mapStr += "\n"
 	}
 
-  fmt.Println(mapStr)
+	fmt.Println(mapStr)
 }
 
 func day8CalcAntinodes() {
@@ -169,6 +223,6 @@ func day8CalcAntinodes() {
 
 	m.evaluate()
 
-	fmt.Println("antinodes", m.antiNodesCounter)
-  m.printMap()
+	m.printMap()
+	fmt.Println("antinodes", m.getAntiNodeCount(), m.getSuperAntiNodeCounter())
 }

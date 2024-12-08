@@ -8,4 +8,6 @@ func main() {
 	day3ExtractMulWithCondition()
 	day4XmaxCount()
 	day5ManualPrinting()
+	day6WalkAPath()
+	day7CalcPath()
 }

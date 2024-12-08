@@ -29,3 +29,16 @@ func readLines(fileName string) []string {
 
 	return lines
 }
+
+func readMap(fileName string) [][]string {
+	lines := readLines(fileName)
+
+	var board [][]string
+
+	for _, line := range lines {
+		points := strings.Split(line, "")
+		board = append(board, points)
+	}
+
+	return board
+}

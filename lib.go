@@ -16,12 +16,10 @@ func readFileInput(fileName string) []byte {
 	return bytes.TrimSpace(content)
 }
 
-func readFileLines(fileName string) []string {
-	input := readFileInput(fileName)
-
+func readLines(text string) []string {
 	var lines []string
 
-	sc := bufio.NewScanner(strings.NewReader(string(input)))
+	sc := bufio.NewScanner(strings.NewReader(text))
 
 	for sc.Scan() {
 		lines = append(lines, sc.Text())
@@ -30,9 +28,13 @@ func readFileLines(fileName string) []string {
 	return lines
 }
 
-func readFileMap(fileName string) [][]string {
-	lines := readFileLines(fileName)
+func readFileLines(fileName string) []string {
+	input := readFileInput(fileName)
 
+	return readLines(string(input))
+}
+
+func readMap(lines []string) [][]string {
 	var board [][]string
 
 	for _, line := range lines {
@@ -41,4 +43,10 @@ func readFileMap(fileName string) [][]string {
 	}
 
 	return board
+}
+
+func readFileMap(fileName string) [][]string {
+	lines := readFileLines(fileName)
+
+	return readMap(lines)
 }

@@ -59,17 +59,20 @@ func (m *Day8Map) isOut(p Point) bool {
 * Check for placed both antenas and antinodes
  */
 func (m *Day8Map) isFree(p Point) bool {
-	innerAntenasMap, antenasOk := m.antenasSet[p.x]
+	// innerAntenasMap, antenasOk := m.antenasSet[p.x]
 	innerAntinodesMap, antinodesOk := m.antinodesSet[p.x]
 
-	if !antenasOk && !antinodesOk {
+	// if !antenasOk && !antinodesOk {
+	if !antinodesOk {
 		return true
 	}
 
-	_, antenasOk = innerAntenasMap[p.y]
+	// _, antenasOk = innerAntenasMap[p.y]
 	_, antinodesOk = innerAntinodesMap[p.y]
 
-	return !antenasOk && !antinodesOk
+	// return !antenasOk && !antinodesOk
+	return !antinodesOk
+}
 }
 
 func (m *Day8Map) checkPair(p1 Point, points []Point) {

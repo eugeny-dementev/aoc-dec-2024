@@ -92,8 +92,6 @@ func (m *Day8Map) checkPair(p1 Point, points []Point) {
 	}
 
 	for _, p2 := range points {
-		fmt.Printf("checking {%v,%v} vs {%v,%v}\n", p1.x, p1.y, p2.x, p2.y)
-
 		xdiff := p1.x - p2.x
 		ydiff := p1.y - p2.y
 
@@ -135,8 +133,8 @@ func (m *Day8Map) printMap() {
 }
 
 func day8CalcAntinodes() {
-	board := readMap(readLines(day8example))
-	// board := readFileMap("day8.txt")
+	// board := readMap(readLines(day8example))
+	board := readFileMap("day8.txt")
 
 	antenasSet := map[int]map[int]string{}
 	antenasCoords := map[string][]Point{}
@@ -166,11 +164,11 @@ func day8CalcAntinodes() {
 
 	// m.addAntiNode(Point{1, 7})
 
-	fmt.Println("antenasSet", antenasSet, m.isFree(Point{1, 7}))
-	fmt.Println("antenasCoords", antenasCoords)
+	// fmt.Println("antenasSet", antenasSet, m.isFree(Point{1, 7}))
+	// fmt.Println("antenasCoords", antenasCoords)
 
 	m.evaluate()
 
-	fmt.Println("antinodes", m.antiNodesCounter, m.antinodesSet)
+	fmt.Println("antinodes", m.antiNodesCounter)
   m.printMap()
 }

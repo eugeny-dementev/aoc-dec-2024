@@ -16,9 +16,41 @@ var day8example = `............
 ............`
 
 type Day8Map struct {
-	antenasSet    map[int]map[int]string
-	antenasCoords map[string][]Point
-	board         [][]string
+	antenasSet       map[int]map[int]string
+  antinodesSet      map[int]map[int]string
+	antenasCoords    map[string][]Point
+	board            [][]string
+	antiNodesCounter int
+}
+
+func (m *Day8Map) addAntiNode(p Point) {
+	if !m.isFree(p) {
+		return
+	}
+
+	_, ok := m.antinodesSet[p.x]
+	if !ok {
+		m.antinodesSet[p.x] = map[int]string{}
+	}
+
+  m.antinodesSet[p.x][p.y] = "#"
+}
+
+/**
+* Check for placed both antenas and antinodes
+ */
+func (m *Day8Map) isFree(p Point) bool {
+	innerAntenasMap, antenasOk := m.antenasSet[p.x]
+  innerAntinodesMap, antinodesOk := m.antinodesSet[p.x]
+
+	if !antenasOk && !antinodesOk {
+		return true
+	}
+
+	_, antenasOk = innerAntenasMap[p.y]
+	_, antinodesOk = innerAntinodesMap[p.y]
+
+	return !antenasOk && !antinodesOk
 }
 
 func day8CalcAntinodes() {
@@ -43,6 +75,16 @@ func day8CalcAntinodes() {
 		}
 	}
 
-	fmt.Println("antenasSet", antenasSet)
+	m := Day8Map{
+		antenasSet:       antenasSet,
+		antenasCoords:    antenasCoords,
+    antinodesSet: map[int]map[int]string{},
+		board:            board,
+		antiNodesCounter: 0,
+	}
+
+  // m.addAntiNode(Point{1, 7})
+
+	fmt.Println("antenasSet", antenasSet, m.isFree(Point{1, 7}))
 	fmt.Println("antenasCoords", antenasCoords)
 }

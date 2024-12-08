@@ -73,6 +73,17 @@ func (m *Day8Map) isFree(p Point) bool {
 	// return !antenasOk && !antinodesOk
 	return !antinodesOk
 }
+
+func (m *Day8Map) isAntiNode(p Point) bool {
+	_, ok := m.antinodesSet[p.x]
+
+	if !ok {
+		return false
+	}
+
+	_, ok = m.antinodesSet[p.x][p.y]
+
+	return ok
 }
 
 func (m *Day8Map) checkPair(p1 Point, points []Point) {
@@ -105,6 +116,22 @@ func (m *Day8Map) evaluate() {
 		p1 := coords[0]
 		m.checkPair(p1, coords[1:])
 	}
+}
+
+func (m *Day8Map) printMap() {
+	mapStr := ""
+	for x, line := range m.board {
+		for y, symbol := range line {
+			if m.isAntiNode(Point{x, y}) {
+				mapStr += "#"
+			} else {
+				mapStr += symbol
+			}
+		}
+    mapStr += "\n"
+	}
+
+  fmt.Println(mapStr)
 }
 
 func day8CalcAntinodes() {
@@ -142,7 +169,8 @@ func day8CalcAntinodes() {
 	fmt.Println("antenasSet", antenasSet, m.isFree(Point{1, 7}))
 	fmt.Println("antenasCoords", antenasCoords)
 
-  m.evaluate()
+	m.evaluate()
 
-  fmt.Println("antinodes", m.antiNodesCounter, m.antinodesSet)
+	fmt.Println("antinodes", m.antiNodesCounter, m.antinodesSet)
+  m.printMap()
 }

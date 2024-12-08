@@ -38,6 +38,15 @@ func (c *Context) check(result, left, right int64, values []int64) {
 		return
 	}
 
+	conResStr := strconv.FormatInt(left, 10) + strconv.FormatInt(right, 10)
+	conRes, err := strconv.ParseInt(conResStr, 0, 0)
+	assert.NoError(err, "should parse conResStr with no errors ", "conResStr", conResStr)
+
+	if conRes == result && len(values) == 0 {
+		c.validAnswers[result] = true
+		return
+	}
+
 	if len(values) == 0 {
 		return
 	}
@@ -46,22 +55,23 @@ func (c *Context) check(result, left, right int64, values []int64) {
 
 	c.check(result, sumRes, right, values[1:])
 	c.check(result, mulRes, right, values[1:])
+	c.check(result, conRes, right, values[1:])
 }
 
-func (c *Context) evaluate() int64{
+func (c *Context) evaluate() int64 {
 	for result, values := range c.equations {
 		left := values[0]
 		right := values[1]
 		c.check(result, left, right, values[2:])
 	}
 
-  var result int64
+	var result int64
 
-  for value, _ := range c.validAnswers {
-    result += value
-  }
+	for value := range c.validAnswers {
+		result += value
+	}
 
-  return result
+	return result
 }
 
 func day7CalcPath() {
@@ -92,7 +102,7 @@ func day7CalcPath() {
 		context.equations[result] = values
 	}
 
-  result := context.evaluate()
+	result := context.evaluate()
 
-  fmt.Println("Result:", result)
+	fmt.Println("Result:", result)
 }

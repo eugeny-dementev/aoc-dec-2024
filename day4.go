@@ -210,7 +210,7 @@ func day4CheckXMaxForCoordinate(x, y int, matrix Matrix) int {
 }
 
 func day4XmaxCount() {
-	content := readInput("day4.txt")
+	content := readFileInput("day4.txt")
 
 	matrix := readMatrix(content)
 

@@ -75,7 +75,7 @@ func (c *Context) evaluate() int64 {
 }
 
 func day7CalcPath() {
-	input := readInput("day7.txt")
+	input := readFileInput("day7.txt")
 
 	context := Context{
 		map[int64][]int64{},

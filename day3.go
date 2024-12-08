@@ -19,7 +19,7 @@ func readDay3Input() []byte {
 }
 
 func day3ExtractMul() {
-	content := readInput("day3.txt")
+	content := readFileInput("day3.txt")
 
 	matchSearcher := regexp.MustCompile(`mul\([[:digit:]]+,[[:digit:]]+\)`)
 	matches := matchSearcher.FindAll(content, -1)
@@ -38,7 +38,7 @@ func day3ExtractMul() {
 }
 
 func day3ExtractMulWithCondition() {
-	content := readInput("day3.txt")
+	content := readFileInput("day3.txt")
 
 	matchSearcher := regexp.MustCompile(`mul\([[:digit:]]+,[[:digit:]]+\)`)
 	matches := matchSearcher.FindAll(content, -1)

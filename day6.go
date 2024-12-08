@@ -430,7 +430,7 @@ func (g *Guard) startPatrol(visualize bool) {
 }
 
 func day6WalkAPath() {
-	input := readInput("day6.txt")
+	input := readFileInput("day6.txt")
 
 	var lines []string
 	sc := bufio.NewScanner(strings.NewReader(string(input)))

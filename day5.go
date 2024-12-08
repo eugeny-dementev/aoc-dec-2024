@@ -92,7 +92,7 @@ func (s Section) Less(i, j int) bool {
 }
 
 func day5ManualPrinting() {
-	content := readInput("day5.txt")
+	content := readFileInput("day5.txt")
 
 	parts := splitByEmptyNewline(string(content))
 	rulesMap = day5ReadOrderingRules(parts[0])

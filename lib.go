@@ -9,15 +9,15 @@ import (
 	"strings"
 )
 
-func readInput(fileName string) []byte {
+func readFileInput(fileName string) []byte {
 	content, err := os.ReadFile(fileName)
 	assert.NoError(err, fmt.Sprintf("should read %s file without issues", fileName))
 
 	return bytes.TrimSpace(content)
 }
 
-func readLines(fileName string) []string {
-	input := readInput(fileName)
+func readFileLines(fileName string) []string {
+	input := readFileInput(fileName)
 
 	var lines []string
 
@@ -30,8 +30,8 @@ func readLines(fileName string) []string {
 	return lines
 }
 
-func readMap(fileName string) [][]string {
-	lines := readLines(fileName)
+func readFileMap(fileName string) [][]string {
+	lines := readFileLines(fileName)
 
 	var board [][]string
 

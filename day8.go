@@ -223,6 +223,6 @@ func day8CalcAntinodes() {
 
 	m.evaluate()
 
-	m.printMap()
+	// m.printMap()
 	fmt.Println("antinodes", m.getAntiNodeCount(), m.getSuperAntiNodeCounter())
 }

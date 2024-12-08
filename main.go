@@ -10,4 +10,5 @@ func main() {
 	day5ManualPrinting()
 	day6WalkAPath()
 	day7CalcPath()
+	day8CalcAntinodes()
 }

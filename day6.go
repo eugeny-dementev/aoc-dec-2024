@@ -426,7 +426,7 @@ func (g *Guard) startPatrol(visualize bool) {
 	fmt.Println("Patrol is done, performed steps:", g.steps, len(g.unique))
 	fmt.Println("Confirmed loop obstacles found:", g.getUniqueConfirmedLoopObstacles())
 
-	g.printMap()
+	// g.printMap()
 }
 
 func day6WalkAPath() {
@@ -450,7 +450,6 @@ func day6WalkAPath() {
 		if !isGuardFound {
 			for y, place := range places {
 				if place != "." && place != "#" {
-					fmt.Println("Guard found", x, y)
 					places[y] = "."
 					guard = Guard{
 						place:                    &Point{x, y},
@@ -475,7 +474,7 @@ func day6WalkAPath() {
 	guard.turnMap()
 	guard.turnMap()
 	guard.calculateVisiblePlaces()
-	fmt.Println("Visible points", guard.visibleDirectionPointSet)
-	guard.printMap()
+	// fmt.Println("Visible points", guard.visibleDirectionPointSet)
+	// guard.printMap()
 	guard.startPatrol(false)
 }

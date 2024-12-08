@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-var day8example = []byte(`............
+var day8example = `............
 ........0...
 .....0......
 .......0....
@@ -13,30 +13,36 @@ var day8example = []byte(`............
 ........A...
 .........A..
 ............
-............`)
+............`
 
 type Day8Map struct {
-	antenas map[int]map[int]string
-	board   [][]string
+	antenasSet    map[int]map[int]string
+	antenasCoords map[string][]Point
+	board         [][]string
 }
 
 func day8CalcAntinodes() {
-	board := readMap("day8.txt")
+	board := readMap(readLines(day8example))
+	// board := readFileMap("day8.txt")
 
-	antenas := map[int]map[int]string{}
+	antenasSet := map[int]map[int]string{}
+	antenasCoords := map[string][]Point{}
 
 	for x, line := range board {
 		for y, point := range line {
 			if point != "." {
-        _, ok := antenas[x]
-        if !ok {
-          antenas[x] = map[int]string{}
-        }
+				_, ok := antenasSet[x]
+				if !ok {
+					antenasSet[x] = map[int]string{}
+				}
 
-				antenas[x][y] = point
+				antenasSet[x][y] = point
+
+				antenasCoords[point] = append(antenasCoords[point], Point{x, y})
 			}
 		}
 	}
 
-  fmt.Println("antenas", antenas)
+	fmt.Println("antenasSet", antenasSet)
+	fmt.Println("antenasCoords", antenasCoords)
 }

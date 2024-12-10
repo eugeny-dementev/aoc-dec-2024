@@ -11,4 +11,7 @@ func main() {
 	day6WalkAPath()
 	day7CalcPath()
 	day8CalcAntinodes()
+  day9TwoPointer()
+  // day9Optimised()
+  day10TrailsCount()
 }

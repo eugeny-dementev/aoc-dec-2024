@@ -16,7 +16,7 @@ var day10example = `89010123
 01329801
 10456732`
 
-var day10example0 = `0123
+  var day10example0 =`0123
 1234
 8765
 9876`
@@ -30,17 +30,12 @@ var directionVectors map[rune]image.Point = map[rune]image.Point{
 
 var bounds image.Rectangle
 
+var trailsCache map[image.Point][][]image.Point = map[image.Point][][]image.Point{}
 var trailsNinesCache map[image.Point]map[image.Point]bool = map[image.Point]map[image.Point]bool{}
 
 func walkTrail(cur image.Point, board [][]int, trail []image.Point, visitedSet map[image.Point]bool) {
-	_, visited := visitedSet[cur]
-
-	if !cur.In(bounds) || visited {
+	if !cur.In(bounds) {
 		return
-	}
-
-	if visited {
-		panic(fmt.Errorf("%v was already visited", cur))
 	}
 
 	curHeight := board[cur.X][cur.Y]
@@ -56,7 +51,8 @@ func walkTrail(cur image.Point, board [][]int, trail []image.Point, visitedSet m
 	if curHeight == 9 {
 		visitedSet[cur] = true
 		head := trail[0]
-		trailsNinesCache[head][cur] = true
+    trailsNinesCache[head][cur] = true
+		trailsCache[head] = append(trailsCache[head], trail)
 
 		return
 	}
@@ -96,8 +92,8 @@ func day10PrintTrail(board [][]int, trail []image.Point) {
 }
 
 func day10TrailsCount() {
-	// board := readFileMap("day10.txt")
-	boardStrings := readMap(readLines(day10example))
+	boardStrings := readFileMap("day10.txt")
+	// boardStrings := readMap(readLines(day10example))
 	// boardStrings := readMap(readLines(day10example0))
 
 	board := [][]int{}
@@ -113,7 +109,8 @@ func day10TrailsCount() {
 			if height == 0 {
 				head := image.Point{x, y}
 				startingPoints = append(startingPoints, head)
-				trailsNinesCache[head] = map[image.Point]bool{}
+				trailsCache[head] = [][]image.Point{}
+        trailsNinesCache[head] = map[image.Point]bool{}
 			}
 
 			line = append(line, int(height))
@@ -132,10 +129,13 @@ func day10TrailsCount() {
 	}
 
 	var score int
+  var variationScore int
 
-	for _, headMap := range trailsNinesCache {
+	for p, headMap := range trailsNinesCache {
 		score += len(headMap)
+    variationScore += len(trailsCache[p])
 	}
 
-	fmt.Println("Final score", score)
+	fmt.Println("Nines score", score)
+  fmt.Println("Variation score", variationScore)
 }

@@ -16,6 +16,11 @@ var day10example = `89010123
 01329801
 10456732`
 
+var day10example0 = `0123
+1234
+8765
+9876`
+
 var directionVectors map[rune]image.Point = map[rune]image.Point{
 	'^': {-1, 0},
 	'>': {0, 1},
@@ -25,18 +30,22 @@ var directionVectors map[rune]image.Point = map[rune]image.Point{
 
 var bounds image.Rectangle
 
-var trailsCache map[image.Point][][]image.Point = map[image.Point][][]image.Point{}
+var trailsNinesCache map[image.Point]map[image.Point]bool = map[image.Point]map[image.Point]bool{}
 
 func walkTrail(cur image.Point, board [][]int, trail []image.Point, visitedSet map[image.Point]bool) {
-	if !cur.In(bounds) || visitedSet[cur] {
+	_, visited := visitedSet[cur]
+
+	if !cur.In(bounds) || visited {
 		return
+	}
+
+	if visited {
+		panic(fmt.Errorf("%v was already visited", cur))
 	}
 
 	curHeight := board[cur.X][cur.Y]
 	prev := trail[len(trail)-1]
 	prevHeight := board[prev.X][prev.Y]
-
-	visitedSet[cur] = true
 
 	if curHeight-1 != prevHeight {
 		return
@@ -45,8 +54,9 @@ func walkTrail(cur image.Point, board [][]int, trail []image.Point, visitedSet m
 	trail = append(trail, cur)
 
 	if curHeight == 9 {
+		visitedSet[cur] = true
 		head := trail[0]
-		trailsCache[head] = append(trailsCache[head], trail)
+		trailsNinesCache[head][cur] = true
 
 		return
 	}
@@ -66,9 +76,29 @@ func day10PrintMap(board [][]int) {
 	}
 }
 
+func day10PrintTrail(board [][]int, trail []image.Point) {
+	trailSet := map[image.Point]bool{}
+	for _, p := range trail {
+		trailSet[p] = true
+	}
+
+	for x, line := range board {
+		for y, height := range line {
+			if (trailSet[image.Point{x, y}]) {
+				fmt.Printf("%v", height)
+			} else {
+				fmt.Printf(".")
+			}
+		}
+		fmt.Printf("\n")
+	}
+	fmt.Printf("\n")
+}
+
 func day10TrailsCount() {
 	// board := readFileMap("day10.txt")
 	boardStrings := readMap(readLines(day10example))
+	// boardStrings := readMap(readLines(day10example0))
 
 	board := [][]int{}
 
@@ -83,7 +113,7 @@ func day10TrailsCount() {
 			if height == 0 {
 				head := image.Point{x, y}
 				startingPoints = append(startingPoints, head)
-				trailsCache[head] = [][]image.Point{}
+				trailsNinesCache[head] = map[image.Point]bool{}
 			}
 
 			line = append(line, int(height))
@@ -94,11 +124,6 @@ func day10TrailsCount() {
 
 	bounds = image.Rectangle{image.Point{0, 0}, image.Point{len(board), len(board[0])}}
 
-  day10PrintMap(board)
-
-	fmt.Println(bounds)
-	fmt.Println(startingPoints)
-
 	for _, p := range startingPoints {
 		walkTrail(p.Add(directionVectors['^']), board, []image.Point{p}, map[image.Point]bool{})
 		walkTrail(p.Add(directionVectors['>']), board, []image.Point{p}, map[image.Point]bool{})
@@ -106,5 +131,11 @@ func day10TrailsCount() {
 		walkTrail(p.Add(directionVectors['<']), board, []image.Point{p}, map[image.Point]bool{})
 	}
 
-	fmt.Println(trailsCache)
+	var score int
+
+	for _, headMap := range trailsNinesCache {
+		score += len(headMap)
+	}
+
+	fmt.Println("Final score", score)
 }

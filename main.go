@@ -14,4 +14,5 @@ func main() {
   day9TwoPointer()
   // day9Optimised()
   day10TrailsCount()
+  day11Recursion()
 }

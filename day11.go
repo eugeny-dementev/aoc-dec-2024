@@ -76,8 +76,8 @@ func splitRock(rock string) (left, right string) {
 }
 
 type RocksParams struct {
-	rock               string
-	depth, targetDepth int
+	rock  string
+	depth int
 }
 
 var rocksCache map[RocksParams]int64 = map[RocksParams]int64{}
@@ -87,7 +87,7 @@ func countProgressionSum(elem string, depth, targetDepth int) int64 {
 		return 1
 	}
 
-	key := RocksParams{elem, depth, targetDepth}
+	key := RocksParams{elem, depth}
 
 	result, ok := rocksCache[key]
 	if ok {
